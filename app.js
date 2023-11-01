@@ -14,11 +14,17 @@ const morgan = require("morgan");
 const connectDB = require("./db/connect");
 
 //middleware
+const notFoundMiddleware = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/error-handler");
+
 app.use(morgan("tiny"));
 
 app.get("/", (req, res) => {
   res.send("Welcome to Food Delivery Application");
 });
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 5000;
 const start = async () => {
