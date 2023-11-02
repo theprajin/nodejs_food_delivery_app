@@ -7,8 +7,10 @@ const app = express();
 
 //rest of the packages
 const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
 //routers
+const authRouter = require("./routes/authRoutes");
 
 //database
 const connectDB = require("./db/connect");
@@ -18,10 +20,14 @@ const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
 app.use(morgan("tiny"));
+app.use(cookieParser(process.env.JWT_SECRET));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Welcome to Food Delivery Application");
 });
+
+app.use("/api/v1/auth", authRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
