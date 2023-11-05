@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 //routers
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
+const restaurantRouter = require("./routes/restaurantRoutes");
 
 //database
 const connectDB = require("./db/connect");
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/restaurants", restaurantRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

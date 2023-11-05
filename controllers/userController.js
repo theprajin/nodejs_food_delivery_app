@@ -24,7 +24,7 @@ const updateUser = async (req, res) => {
   const { email, firstName, lastName } = req.body;
   const user = await User.findOne({ _id: req.user.userId });
   if (!user) {
-    throw new CustomError.BadRequestError(
+    throw new CustomError.NotFoundError(
       `User with id: ${req.user.userId} does not exist`
     );
   }

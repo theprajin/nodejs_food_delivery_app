@@ -2,40 +2,45 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const UserSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: [true, "Please provide first name"],
-    minlength: 2,
-    maxlength: 50,
-  },
-  lastName: {
-    type: String,
-    required: [true, "Please provide last name"],
-    minlength: 2,
-    maxlength: 50,
-  },
-  email: {
-    type: String,
-    required: [true, "Please provide email"],
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: "Please provide valid email",
+const UserSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, "Please provide first name"],
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
+    lastName: {
+      type: String,
+      required: [true, "Please provide last name"],
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
+    email: {
+      type: String,
+      required: [true, "Please provide email"],
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide valid email",
+      },
+    },
+    password: {
+      type: String,
+      required: [true, "Please provide password"],
+      minlength: 6,
+      maxlength: 500,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "user", "driver"],
+      default: "user",
     },
   },
-  password: {
-    type: String,
-    required: [true, "Please provide password"],
-    minlength: 6,
-    maxlength: 500,
-  },
-  role: {
-    type: String,
-    enum: ["admin", "user", "driver"],
-    default: "user",
-  },
-});
+  { timestamps: true }
+);
 
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

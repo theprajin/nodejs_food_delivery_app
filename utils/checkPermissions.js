@@ -8,4 +8,11 @@ const checkPermissions = (requestUser, resourceId) => {
   );
 };
 
-module.exports = checkPermissions;
+const authenticatedUserCanPermission = (requestUser, resourceId) => {
+  if (requestUser.userId === resourceId.toString()) return;
+  throw new CustomError.UnauthenticatedError(
+    "Not Allowed to access this route"
+  );
+};
+
+module.exports = { checkPermissions, authenticatedUserCanPermission };
