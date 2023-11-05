@@ -16,4 +16,4 @@
 
 #### Testing API endpoints
 
-- Use Postman or any web clients of your choice
+- Use Postman or any web clients of your choice(Swagger UI will be added later)
