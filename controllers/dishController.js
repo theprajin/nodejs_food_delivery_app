@@ -1,21 +1,67 @@
+const Dish = require("../models/Dish");
+const { StatusCodes } = require("http-status-codes");
+const CustomError = require("../errors");
+const { authenticatedUserCanPermission } = require("../utils");
+
 const getAllDishes = async (req, res) => {
-  return res.send("Get All Dishes");
+  const dishes = await Dish.find({}).select("-user");
+
+  return res.status(StatusCodes.OK).json({ dishes });
 };
 
 const getSingleDish = async (req, res) => {
-  return res.send("Get Single Dish");
+  const { id: dishId } = req.params;
+  const dish = await Dish.findOne({ _id: dishId }).select("-user");
+  if (!dish) {
+    throw new CustomError.NotFoundError(`Dish with id: ${dishId} not found`);
+  }
+  return res.status(StatusCodes.OK).json({ dish });
 };
 
 const createDish = async (req, res) => {
-  return res.send("Create Dish");
+  req.body.user = req.user.userId;
+  const dish = await Dish.create(req.body);
+  return res.status(StatusCodes.CREATED).json({ dish });
 };
 
 const updateDish = async (req, res) => {
-  return res.send("Update Dish");
+  const { id: dishId } = req.params;
+  const { name, description, price, tag, restaurant } = req.body;
+
+  const dish = await Dish.findOne({ _id: dishId });
+  if (!dish) {
+    throw new CustomError.NotFoundError(
+      `Dish with id: ${dishId} does not exist`
+    );
+  }
+
+  authenticatedUserCanPermission(req.user, dish.user);
+
+  dish.name = name;
+  dish.description = description;
+  dish.price = price;
+  dish.tag = tag;
+  dish.restaurant = restaurant;
+
+  await dish.save();
+
+  return res.status(StatusCodes.CREATED).json({ dish });
 };
 
 const deleteDish = async (req, res) => {
-  return res.send("Delete Dishes");
+  const { id: dishId } = req.params;
+  const dish = await Dish.findOne({ _id: dishId });
+  if (!dish) {
+    throw new CustomError.NotFoundError(
+      `Dish with id: ${dishId} does not exist`
+    );
+  }
+
+  authenticatedUserCanPermission(req.user, dish.user);
+
+  await dish.deleteOne();
+
+  res.status(StatusCodes.OK).json({ msg: "Success! Restaurant removed" });
 };
 
 module.exports = {

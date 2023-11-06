@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+const TagSchema = new mongoose.Schema({
+  value: {
+    type: [String],
+    required: [true, "Please provide a tag"],
+    enum: ["veg", "non-veg", "vegan"],
+  },
+});
+
 const DishSchema = new mongoose.Schema(
   {
     name: {
@@ -18,8 +26,8 @@ const DishSchema = new mongoose.Schema(
       required: [true, "Please provide a price"],
     },
     tag: {
-      type: [String],
-      required: [true, "Please provide a tag"],
+      type: String,
+      required: true,
       enum: ["veg", "non-veg", "vegan"],
     },
     user: {
