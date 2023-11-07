@@ -13,6 +13,8 @@ const {
   authorizePermission,
 } = require("../middleware/authenticate");
 
+const { getSingleRestaurantDishes } = require("../controllers/dishController");
+
 const Joi = require("joi");
 const validator = require("express-joi-validation").createValidator({});
 const express = require("express");
@@ -41,5 +43,7 @@ router
   .get(getSingleRestaurant)
   .patch([validator.body(RestaurantSchema), authenticateUser], updateRestaurant)
   .delete([authenticateUser, authorizePermission("admin")], deleteRestaurant);
+
+router.route("/:id/dishes").get(getSingleRestaurantDishes);
 
 module.exports = router;
