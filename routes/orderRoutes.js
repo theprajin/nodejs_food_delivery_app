@@ -17,7 +17,7 @@ const router = express.Router();
 router
   .route("/")
   .get([authenticateUser, authorizePermission("admin")], getAllOrders)
-  .post(createOrder);
+  .post(authenticateUser, createOrder);
 
 router.route("/my-orders").get(authenticateUser, getSingleUserOrders);
 

@@ -22,10 +22,6 @@ const SingleCartItemSchema = new mongoose.Schema({
 
 const OrderSchema = new mongoose.Schema({
   orderItems: [SingleCartItemSchema],
-  subtotal: {
-    type: Number,
-    required: true,
-  },
   total: {
     type: Number,
     required: true,
@@ -33,6 +29,7 @@ const OrderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["pending", "failed", "paid", "delivered", "canceled"],
+    default: "pending",
   },
   user: {
     type: mongoose.Types.ObjectId,
