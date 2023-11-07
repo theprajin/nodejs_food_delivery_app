@@ -59,8 +59,9 @@ const updateOrder = async (req, res) => {
   return res.send("Update Order");
 };
 
-const getSingleUserOrders = async (req, res) => {
-  return res.send("Get Single User Orders");
+const getCurrentUserOrders = async (req, res) => {
+  const orders = await Order.find({ user: req.user.userId });
+  res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 
 module.exports = {
@@ -68,5 +69,5 @@ module.exports = {
   getSingleOrder,
   createOrder,
   updateOrder,
-  getSingleUserOrders,
+  getCurrentUserOrders,
 };
