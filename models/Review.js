@@ -25,6 +25,11 @@ const ReviewSchema = new mongoose.Schema(
       ref: "Dish",
       required: true,
     },
+    order: {
+      type: mongoose.Types.ObjectId,
+      ref: "Order",
+      required: true,
+    },
   },
   { timestamps: true }
 );
