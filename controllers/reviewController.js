@@ -4,25 +4,57 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find({}).select("-order");
+  const reviews = await Review.find({})
+    .select("-order")
+    .populate({
+      path: "dish",
+      select: "name",
+    })
+    .populate({
+      path: "user",
+      select: "firstName lastName",
+    });
   return res.status(StatusCodes.OK).json({ reviews });
 };
 
 const getSingleReview = async (req, res) => {
   const { id: reviewId } = req.params;
-  const review = await Review.findOne({ _id: reviewId }).select("-order");
+  const review = await Review.findOne({ _id: reviewId })
+    .select("-order")
+    .populate({
+      path: "dish",
+      select: "name",
+    })
+    .populate({
+      path: "user",
+      select: "firstName lastName",
+    });
   return res.status(StatusCodes.OK).json({ review });
 };
 
 const createReview = async (req, res) => {
   req.body.user = req.user.userId;
   const { comment, rating, dish: dishID, order: orderId, user } = req.body;
-  const isDelivered = await Order.find({ _id: orderId, status: "delivered" });
+  const alreadySubmitted = await Review.findOne({
+    dish: dishID,
+    order: orderId,
+    user: req.user.userId,
+  });
+  if (alreadySubmitted) {
+    throw new CustomError.BadRequestError(
+      "Already submitted review for this dish in this order"
+    );
+  }
+  const isDelivered = await Order.findOne({
+    _id: orderId,
+    status: "delivered",
+  });
   if (!isDelivered) {
     throw new CustomError.BadRequestError(
       `You cannot review the product until it is delivered`
     );
   }
+
   const review = await Review.create({
     comment,
     rating,
