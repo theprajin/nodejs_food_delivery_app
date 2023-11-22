@@ -1,4 +1,4 @@
-# Ecommerce Project(NodeJS,Express,MongoDB)
+# Food Delivery App Project(NodeJS,Express,MongoDB)
 
 #### Setup the Project
 
