@@ -6,7 +6,7 @@ const { checkPermissions } = require("../utils");
 
 const getAllOrders = async (req, res) => {
   const orders = await Order.find({});
-  res.status(StatusCodes.OK).json({ orders, count: orders.length });
+  return res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 
 const getSingleOrder = async (req, res) => {
@@ -16,7 +16,7 @@ const getSingleOrder = async (req, res) => {
     throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
   }
   checkPermissions(req.user, order.user);
-  res.status(StatusCodes.OK).json({ order });
+  return res.status(StatusCodes.OK).json({ order });
 };
 
 const createOrder = async (req, res) => {
@@ -52,16 +52,27 @@ const createOrder = async (req, res) => {
     user: req.user.userId,
   });
 
-  res.status(StatusCodes.CREATED).json({ order });
+  return res.status(StatusCodes.CREATED).json({ order });
 };
 
 const updateOrder = async (req, res) => {
-  return res.send("Update Order");
+  const { id: orderId } = req.params;
+
+  const order = await Order.findOne({ _id: orderId });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${orderId}`);
+  }
+  checkPermissions(req.user, order.user);
+
+  order.status = "paid";
+  await order.save();
+
+  return res.status(StatusCodes.OK).json({ order });
 };
 
 const getCurrentUserOrders = async (req, res) => {
   const orders = await Order.find({ user: req.user.userId });
-  res.status(StatusCodes.OK).json({ orders, count: orders.length });
+  return res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 
 module.exports = {
